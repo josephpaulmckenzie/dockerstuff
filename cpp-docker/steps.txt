@@ -1,0 +1,87 @@
+yum install gcc64-c++ libcurl-devel -y
+export CC=gcc64
+export CXX=g++64
+yum install cmake3 -y
+yum install git -y
+yum install nano -y
+yum install cmake.x86_64 -y
+yum install gcc-c++.x86_64 -y 
+yum install make.x86_64 -y
+yum install zip -y
+yum install aws-cli -y 
+
+// Download and compile the runtime
+
+bash lambda-cpp.sh
+
+/// end //
+
+// Make and change into folder for our code to live in //
+mkdir hello-cpp-world
+cd hello-cpp-world
+
+// end // 
+
+// create example c++ function foor lambda //
+
+// create the files
+touch main.cpp 
+
+nano or vim into the file and paste in code from example file
+
+touch CMakeLists.txt
+
+nano or vim into and paste code from example CMakeLists.txt
+
+/// build the exectuable ////
+
+mkdir build
+cd build
+cmake3 .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=~/out
+make
+
+/////
+
+/// package the exectuable////
+
+ make aws-lambda-package-hello
+/////
+
+
+// if aws secret and access keys are not set make sure they are //
+
+// todo make script do this part too
+aws configure
+
+
+
+
+// Create role for lambda function //
+
+touch trust-policy.json
+nano or vim into trust-policy.json and paste in role policy
+
+aws iam create-role \
+--role-name lambda-cpp-demo \
+--assume-role-policy-document file://trust-policy.json
+
+////
+
+
+/// cmake3 .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=~/out
+
+// use the above arn for your role that you just created
+
+aws lambda create-function \
+--function-name hello-world \
+--role arn:aws:iam::740955237482:role/lambda-cpp-demo \
+--runtime provided \
+--timeout 15 \
+--memory-size 128 \
+--handler hello \
+--zip-file fileb://hello.zip
+
+
+// invoke your lambda
+
+aws lambda invoke --function-name hello-world --payload '{ }' output.txt

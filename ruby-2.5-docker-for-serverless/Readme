@@ -1,0 +1,17 @@
+Will create the boilerplate for the serverless.yml
+
+$ serverless create -t aws-ruby -p yourServiceName
+
+++++ make sure you aws keys are set in ypur terminal  ++++
+
+$ sls deploy 
+
+Create a gemfile and add the required gems you want
+
+
+$ docker run --rm -it -v $PWD:/var/gem_build -w /var/gem_build lambci/lambda:build-ruby2.5 bundle install --path=.
+
+
+
+
+
